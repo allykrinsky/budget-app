@@ -1,0 +1,17 @@
+# Python
+*.pyc
+__pycache__/
+budget_env/
+env/
+venv/
+.venv/
+
+# Node
+node_modules/
+build/
+.env
+
+# Other
+.DS_Store
+*.log
+*.sqlite3
