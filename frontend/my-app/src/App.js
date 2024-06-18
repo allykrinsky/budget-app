@@ -1,8 +1,24 @@
-// src/App.js
+
 import React from 'react';
-import {Text} from 'react-native'
-import TabGroup from './components/Tabs/TabGroup';
-import Header from './components/utils/Heading';
+import TabGroup from './components/Tab';
+import TransactionModal from './components/Modal';
+
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  ChakraProvider,
+  Heading
+} from '@chakra-ui/react'
+
+
+import { Button, ButtonGroup } from '@chakra-ui/react'
+
 
 const tabs = [
   {
@@ -19,12 +35,16 @@ const tabs = [
   },
 ];
 
+
 function App() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <div className="App">
-     <Header text="Monthly Expenses"/>
-      <TabGroup tabs={tabs} />
-    </div>
+    <ChakraProvider>
+     <Heading>Monthly Expenses</Heading>
+      <TabGroup info={tabs}/>
+      <Button onClick={onOpen}>New Transaction</Button>
+     <TransactionModal isOpen={isOpen} onClose={onClose}/>
+  </ChakraProvider>
   );
 }
 
