@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from . import models, database, schemas, crud
 from datetime import date
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -12,6 +13,18 @@ def get_db():
         yield db
     finally:
         db.close()
+
+origins = [
+    "http://localhost:3000",  # Replace with your frontend URL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Create the database and tables
 @app.on_event("startup")

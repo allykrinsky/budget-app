@@ -10,8 +10,11 @@ import {
     Input,
     Stack,
     Select,
-    Button
+    Button,
   } from '@chakra-ui/react'
+
+import { FormControl, FormLabel, Container, Box } from '@chakra-ui/react';
+import { useState } from 'react';
 
 
 const categories = [
@@ -19,19 +22,110 @@ const categories = [
 ]
 
 
-const handleTransaction = async () => {
-  try {
-    const response = await fetch('http://localhost:8000/transactions', {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+// const handleTransaction = async (item, amount, category) => {
+//   try {
+//     const response = await fetch('http://127.0.0.1:8000/transactions/', {
+//       method: 'POST', 
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         item, amount, category
+//       }),
+//     });
+//     console.log(JSON.stringify({
+//       item, amount, category
+//     }))
+//     const data = await response.json();
+//     console.log(data);
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//   }
+// };
+
+
+const TransactionForm = () => {
+  const [item, setItem] = useState('');
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Handle form submission here
+    console.log('Submitted Item:', item);
+    console.log('Submitted Amount:', amount);
+    console.log('Submitted Description:', category);
+    // Optionally, clear input fields after submission
+    setItem('');
+    setAmount('');
+    setCategory('');
+  };
+
+  const handleTransaction = async (item, amount, category) => {
+
+    const date = new Date();
+    try {
+      const response = await fetch('http://127.0.0.1:8000/transactions/', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          date, item, amount, category
+        }),
+      });
+      console.log(JSON.stringify({
+        date, item, amount, category
+      }))
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  return (
+    <Container maxW="sm">
+      <Box p={4}>
+        <form onSubmit={handleSubmit}>
+          <FormControl id="item" mb={4}>
+              <FormLabel>Item</FormLabel>
+              <Input
+                type="text"
+                value={item}
+                onChange={(e) => setItem(e.target.value)}
+                placeholder="Enter Item"
+                required
+              />
+            </FormControl>
+          <FormControl id="amount" mb={4}>
+            <FormLabel>Amount</FormLabel>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              required
+            />
+          </FormControl>
+          <FormControl id="category" mb={4}>
+            <FormLabel>Category</FormLabel>
+            <Input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Enter description"
+              required
+            />
+          </FormControl>
+          <Button colorScheme="blue" onClick={() => handleTransaction(item, amount, category)} type="submit">
+            Submit
+          </Button>
+        </form>
+      </Box>
+    </Container>
+  );
 };
 
 const TransactionModal = ({isOpen, onClose}) => {
@@ -42,19 +136,9 @@ const TransactionModal = ({isOpen, onClose}) => {
             <ModalHeader>New Transaction</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-            <Stack spacing={3}>
-                <Input placeholder='Name' size='md' />
-                <Input placeholder='$ Amount' size='md' />
-                {/* <Select placeholder='medium size' size='md' /> */}
-                <Select placeholder='Category' size='md'>
-                    {categories.map((item) => (
-                        <option value='option1'>{item}</option>
-                    ))}
-                </Select>
-            </Stack>
+            <TransactionForm />
             </ModalBody>
             <ModalFooter>
-              <Button onClick={handleTransaction}>Submit</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
