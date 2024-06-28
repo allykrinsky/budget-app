@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from . import models, database, schemas, crud
+from datetime import date
 
 app = FastAPI()
 
@@ -28,14 +29,15 @@ def read_transaction(transaction_id : int, db : Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Item not found")
     return db_trans
 
+@app.get("/transactions/", response_model=list[schemas.Transaction])
+def read_all(db : Session = Depends(get_db)):
+    return crud.get_all_transactions(db)
 
-@app.put("/transactions/{transaction_id}", response_model=schemas.Transaction)
+
+@app.patch("/transactions/{transaction_id}", response_model=schemas.Transaction)
 def update_transaction(transaction_id : int, transaction : schemas.TransactionUpdate, db : Session = Depends(get_db)):
-    return crud.update_transaction(
-        db=db, 
-        transaction_id=transaction_id,
-        transaction=transaction
-    )
+    # check if exists + error
+    return crud.update_transaction(db=db, transaction_id=transaction_id, transaction=transaction)
 
 @app.delete("/transactions/{transaction_id}")
 def delete_transcation(transaction_id : int, db : Session = Depends(get_db)):

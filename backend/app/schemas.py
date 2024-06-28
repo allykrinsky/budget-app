@@ -1,9 +1,10 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class TransactionBase(BaseModel):
 
-    date : str
+    date : datetime
     item : str
     amount : float
     category : str

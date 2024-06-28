@@ -18,6 +18,22 @@ const categories = [
     'Rent', 'Groceries', 'Dining', 'Shopping'
 ]
 
+
+const handleTransaction = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/transactions', {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
 const TransactionModal = ({isOpen, onClose}) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -38,7 +54,7 @@ const TransactionModal = ({isOpen, onClose}) => {
             </Stack>
             </ModalBody>
             <ModalFooter>
-              <Button onClick={onClose}>Submit</Button>
+              <Button onClick={handleTransaction}>Submit</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
