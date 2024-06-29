@@ -2,6 +2,7 @@
 import React from 'react';
 import TabGroup from './components/Tab';
 import TransactionModal from './components/Modal';
+import TransactionsList from './components/TransactionTable.js';
 
 import {
   Modal,
@@ -13,7 +14,9 @@ import {
   ModalCloseButton,
   useDisclosure,
   ChakraProvider,
-  Heading
+  Heading,
+  Flex,
+  Box
 } from '@chakra-ui/react'
 
 
@@ -41,9 +44,16 @@ function App() {
   return (
     <ChakraProvider>
      <Heading>Monthly Expenses</Heading>
-      <TabGroup info={tabs}/>
-      <Button onClick={onOpen}>New Transaction</Button>
+     <Flex justify="space-between" align="center" p={4}>
+      <Box>
+        <TabGroup info={tabs}/>
+      </Box>
+      <Box>
+        <Button onClick={onOpen}>New Transaction</Button>
+      </Box>
+     </Flex>
      <TransactionModal isOpen={isOpen} onClose={onClose}/>
+     <TransactionsList />
   </ChakraProvider>
   );
 }
