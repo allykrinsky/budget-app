@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from . import models, schemas
 from datetime import date
 
@@ -40,3 +41,12 @@ def delete_transaction(db: Session, transaction_id: int):
     db.delete(db_transaction)
     db.commit()
     return db_transaction
+
+
+def get_summary(db : Session):
+    summary = db.query(
+        models.Transaction.category,
+        func.sum(models.Transaction.amount).label('total')
+    ).group_by(models.Transaction.category).all()
+
+    return summary

@@ -1,4 +1,3 @@
-
 import {
     Modal,
     ModalOverlay,
@@ -8,33 +7,25 @@ import {
     ModalBody,
     ModalCloseButton,
     Input,
-    Stack,
-    Select,
     Button,
   } from '@chakra-ui/react'
 
 import { FormControl, FormLabel, Container, Box } from '@chakra-ui/react';
 import { useState } from 'react';
 
+// import { useData } from './TransactionData';
 
-const categories = [
-    'Rent', 'Groceries', 'Dining', 'Shopping'
-]
-
+import axios from 'axios';
 
 const TransactionForm = () => {
   const [item, setItem] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
+  // const { fetchData } = useData();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Handle form submission here
-    console.log('Submitted Item:', item);
-    console.log('Submitted Amount:', amount);
-    console.log('Submitted Description:', category);
-    // Optionally, clear input fields after submission
     setItem('');
     setAmount('');
     setCategory('');
@@ -56,12 +47,32 @@ const TransactionForm = () => {
       console.log(JSON.stringify({
         date, item, amount, category
       }))
-      const data = await response.json();
-      console.log(data);
+      // fetchData();
+      // const data = await response.json();
+      // console.log(data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
+//   const handleTransaction = async (item, amount, category) => {
+//     const date = new Date();
+
+//     const data = JSON.stringify({
+//       date, item, amount, category
+//     })
+
+//     console.log(data);
+
+//     await axios.post('http://127.0.0.1:8000/transactions/', data)
+//     .then(response => {
+//       console.log('done')
+//       // fetchData();
+//     }).catch(error => {
+//       console.log(data)
+//       console.error("There was an error posting the data!", error);
+//     });
+// };
 
   return (
     <Container maxW="sm">
@@ -121,6 +132,6 @@ const TransactionModal = ({isOpen, onClose}) => {
           </ModalContent>
         </Modal>
     )
-  }
+  };
 
 export default TransactionModal;

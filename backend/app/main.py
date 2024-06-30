@@ -1,8 +1,10 @@
 from fastapi import FastAPI, HTTPException, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from . import models, database, schemas, crud
 from datetime import date
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
 app = FastAPI()
 
@@ -55,3 +57,8 @@ def update_transaction(transaction_id : int, transaction : schemas.TransactionUp
 @app.delete("/transactions/{transaction_id}")
 def delete_transcation(transaction_id : int, db : Session = Depends(get_db)):
     return crud.delete_transaction(db=db, transaction_id=transaction_id)
+
+@app.get("/transaction/summary", response_model=List[schemas.CategorySum])
+def get_data_summary(db : Session = Depends(get_db)):
+    return crud.get_summary(db=db)
+    

@@ -3,24 +3,21 @@ import React from 'react';
 import TabGroup from './components/Tab';
 import TransactionModal from './components/Modal';
 import TransactionsList from './components/TransactionTable.js';
+// import CategoryTable from './components/CategoryTable.js';
+// import { DataContext } from '.components/TransactionData.js';
 
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   ChakraProvider,
   Heading,
   Flex,
-  Box
+  Box,
+  Grid
 } from '@chakra-ui/react'
 
 
-import { Button, ButtonGroup } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
+import CategoryTable from './components/CategoryTable.js';
 
 
 const tabs = [
@@ -52,8 +49,16 @@ function App() {
         <Button onClick={onOpen}>New Transaction</Button>
       </Box>
      </Flex>
+
+      <Grid templateColumns='repeat(2, 1fr)' gap={16}>
+        <TransactionsList />
+        <CategoryTable />
+      </Grid>
+
+
      <TransactionModal isOpen={isOpen} onClose={onClose}/>
-     <TransactionsList />
+     
+     
   </ChakraProvider>
   );
 }

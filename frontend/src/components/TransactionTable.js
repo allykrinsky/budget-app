@@ -1,46 +1,63 @@
 import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+// import { useData } from './TransactionData';
+import axios from 'axios';
 
+// const DataContext = createContext();
 
 const TransactionsList = () => {
     const [transactions, setTransactions] = useState([]);
-  
+    const [refetch, setRefetch] = useState(false);
+
+    // const { data } = useData();
+
     useEffect(() => {
-      const fetchTransactions = async () => {
-        try {
-          const response = await fetch('http://127.0.0.1:8000/transactions/', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-  
-          if (!response.ok) {
-            throw new Error('Failed to fetch transactions');
-          }
-  
-          const data = await response.json();
-          setTransactions(data);
-        } catch (error) {
-          console.error('Error fetching transactions:', error.message);
-        }
-      };
-  
+      // console.log("is this doing something??")
       fetchTransactions();
-    }, []);
+    }, [refetch]);
+
+    const fetchTransactions = () => {
+      axios.get('http://127.0.0.1:8000/transactions/')
+      .then(response => {
+        setTransactions(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the data!", error);
+      });
+
+      console.log("got the data")
+  };
+
+    // const fetchTransactions = async () => {
+    //   try {
+    //     const response = await fetch('http://127.0.0.1:8000/transactions/', {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error('Failed to fetch transactions');
+    //     }
+    //     const data = await response.json();
+    //     setTransactions(data);
+    //   } catch (error) {
+    //     console.error('Error fetching transactions:', error.message);
+    //   }
+        
+    //   }
 
     return (
         <TableContainer>
             <Table variant='simple'>
-                <TableCaption>Transactions</TableCaption>
+                <TableCaption placement='top'>Transactions</TableCaption>
                 <Thead>
-                    {/* {transactions.map((transaction) => (  */}
                         <Tr key="header">
                             {transactions.length > 0 && Object.keys(transactions[0]).filter((key) => key !== 'id').map((key) => 
                                 <Th key={key}>{key}</Th>
                             )}
                         </Tr>
-                    {/* ))}; */}
                 </Thead>
                 <Tbody>
                     {transactions.map((transaction) => (
@@ -54,6 +71,6 @@ const TransactionsList = () => {
             </Table>
             </TableContainer>
         )
-    };
+      }
 
 export default TransactionsList;

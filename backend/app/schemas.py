@@ -21,3 +21,7 @@ class Transaction(TransactionBase):
 
     class Config:
         orm_mode = True
+
+class CategorySum(BaseModel):
+    category: str
+    total: float

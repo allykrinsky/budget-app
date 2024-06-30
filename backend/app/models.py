@@ -9,4 +9,6 @@ class Transaction(Base):
     item = Column(String, index=True)
     amount = Column(Double, index=True)
     category = Column(String, index=True)
+
+
     
