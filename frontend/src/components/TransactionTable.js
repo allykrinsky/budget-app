@@ -5,27 +5,28 @@ import axios from 'axios';
 
 // const DataContext = createContext();
 
-const TransactionsList = () => {
+const TransactionsList = ( month ) => {
     const [transactions, setTransactions] = useState([]);
     const [refetch, setRefetch] = useState(false);
 
-    // const { data } = useData();
 
     useEffect(() => {
-      // console.log("is this doing something??")
       fetchTransactions();
-    }, [refetch]);
+    }, []);
 
     const fetchTransactions = () => {
-      axios.get('http://127.0.0.1:8000/transactions/')
+      axios.get('http://127.0.0.1:8000/transactions/', {
+        params: {
+            month: month.month,
+        }})
       .then(response => {
+        console.log(response.data)
         setTransactions(response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the data!", error);
       });
 
-      console.log("got the data")
   };
 
     // const fetchTransactions = async () => {

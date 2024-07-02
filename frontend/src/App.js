@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TabGroup from './components/Tab';
 import TransactionModal from './components/Modal';
 import TransactionsList from './components/TransactionTable.js';
@@ -15,6 +15,7 @@ import {
   Grid
 } from '@chakra-ui/react'
 
+import axios from 'axios';
 
 import { Button } from '@chakra-ui/react'
 import CategoryTable from './components/CategoryTable.js';
@@ -38,27 +39,31 @@ const tabs = [
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const handleTabChange = (index) => {
+    
+    setSelectedTab(index);
+    console.log(selectedTab);
+  };
+
   return (
     <ChakraProvider>
      <Heading>Monthly Expenses</Heading>
      <Flex justify="space-between" align="center" p={4}>
       <Box>
-        <TabGroup info={tabs}/>
+        <TabGroup info={tabs} selectedTab={selectedTab} onTabChange={handleTabChange}/>
       </Box>
       <Box>
         <Button onClick={onOpen}>New Transaction</Button>
       </Box>
      </Flex>
-
       <Grid templateColumns='repeat(2, 1fr)' gap={16}>
-        <TransactionsList />
-        <CategoryTable />
+        {/* <TransactionsList month={selectedTab} /> */}
+        <TransactionsList month={6} /> 
+        <CategoryTable month={6}/>
       </Grid>
-
-
-     <TransactionModal isOpen={isOpen} onClose={onClose}/>
-     
-     
+     <TransactionModal isOpen={isOpen} onClose={onClose}/> 
   </ChakraProvider>
   );
 }

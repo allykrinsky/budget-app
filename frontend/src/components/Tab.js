@@ -1,8 +1,10 @@
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
-const TabGroup = ({info, isActive, onClick }) => {
+
+const TabGroup = ({info, selectedTab, onTabChange }) => {
+
   return (
-    <Tabs>
+    <Tabs onChange={(index) => onTabChange(index)}>
       <TabList>
         {info.map((item) => (
           <Tab>{item.title}</Tab>

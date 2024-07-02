@@ -45,8 +45,8 @@ def read_transaction(transaction_id : int, db : Session = Depends(get_db)):
     return db_trans
 
 @app.get("/transactions/", response_model=list[schemas.Transaction])
-def read_all(db : Session = Depends(get_db)):
-    return crud.get_all_transactions(db)
+def read_all(db : Session = Depends(get_db), month : int = None):
+    return crud.get_all_transactions(db, month)
 
 
 @app.patch("/transactions/{transaction_id}", response_model=schemas.Transaction)
@@ -59,6 +59,6 @@ def delete_transcation(transaction_id : int, db : Session = Depends(get_db)):
     return crud.delete_transaction(db=db, transaction_id=transaction_id)
 
 @app.get("/transaction/summary", response_model=List[schemas.CategorySum])
-def get_data_summary(db : Session = Depends(get_db)):
-    return crud.get_summary(db=db)
+def get_data_summary(db : Session = Depends(get_db), month : int = None):
+    return crud.get_summary(db=db, month=month)
     

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, extract
 from . import models, schemas
 from datetime import date
 
@@ -10,9 +10,13 @@ def get_transcation(db : Session, transaction_id : int):
             models.Transaction.id == transaction_id
         ).first()
 
-def get_all_transactions(db : Session):
-    return db.query(models.Transaction).all()
- 
+def get_all_transactions(db : Session,  month : int = None):
+
+    return db.query(
+            models.Transaction
+            ).filter(
+                extract('month', models.Transaction.date) == month
+            ).all() 
 
 def create_transaction(db : Session, transaction : schemas.TransactionCreate):
     db_transaction = models.Transaction(
@@ -43,10 +47,14 @@ def delete_transaction(db: Session, transaction_id: int):
     return db_transaction
 
 
-def get_summary(db : Session):
+def get_summary(db : Session, month:int = None):
     summary = db.query(
         models.Transaction.category,
         func.sum(models.Transaction.amount).label('total')
-    ).group_by(models.Transaction.category).all()
+    ).group_by(models.Transaction.category
+    ).filter(
+        extract('month', models.Transaction.date) == month
+    ).all()
 
     return summary
+

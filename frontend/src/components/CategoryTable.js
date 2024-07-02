@@ -1,36 +1,29 @@
 import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
+import axios from 'axios';
 
 
-const CategoryTable = () => {
+const CategoryTable = (month) => {
     const [summary, setSummary] = useState([]);
-  
+
     useEffect(() => {
-      const fetchTransactions = async () => {
-        try {
-          const response = await fetch('http://127.0.0.1:8000/transaction/summary', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-  
-          if (!response.ok) {
-            throw new Error('Failed to fetch transactions');
-          }
-  
-          const data = await response.json();
-          setSummary(data);
-          console.log(data)
-        } catch (error) {
-          console.error('Error fetching transactions:', error.message);
-        }
-      };
-  
       fetchTransactions();
     }, []);
 
+    const fetchTransactions = () => {
+      axios.get('http://127.0.0.1:8000/transaction/summary', {
+        params: {
+            month: month.month,
+        }})
+      .then(response => {
+        console.log(response.data)
+        setSummary(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the data!", error);
+      });
+    }
 
     return (
         <TableContainer>
