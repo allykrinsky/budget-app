@@ -8,50 +8,74 @@ import {
     ModalCloseButton,
     Input,
     Button,
+    useToast,
   } from '@chakra-ui/react'
 
 import { FormControl, FormLabel, Container, Box } from '@chakra-ui/react';
 import { useState } from 'react';
 
-// import { useData } from './TransactionData';
-
-import axios from 'axios';
-
-const TransactionForm = () => {
+const TransactionForm = ({ onClose, onSuccess }) => {
   const [item, setItem] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
-  // const { fetchData } = useData();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
 
-    setItem('');
-    setAmount('');
-    setCategory('');
-  };
+    const date = new Date().toISOString();
 
-  const handleTransaction = async (item, amount, category) => {
-
-    const date = new Date();
     try {
       const response = await fetch('http://127.0.0.1:8000/transactions/', {
-        method: 'POST', 
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          date, item, amount, category
+          date,
+          item,
+          amount: parseFloat(amount),
+          category
         }),
       });
-      console.log(JSON.stringify({
-        date, item, amount, category
-      }))
-      // fetchData();
-      // const data = await response.json();
-      // console.log(data);
+
+      if (!response.ok) {
+        throw new Error('Failed to create transaction');
+      }
+
+      toast({
+        title: 'Transaction created',
+        description: 'Your transaction has been added successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Reset form
+      setItem('');
+      setAmount('');
+      setCategory('');
+
+      // Call success callback to refresh data
+      if (onSuccess) {
+        onSuccess();
+      }
+
+      // Close modal
+      onClose();
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error creating transaction:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create transaction. Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -78,38 +102,44 @@ const TransactionForm = () => {
     <Container maxW="sm">
       <Box p={4}>
         <form onSubmit={handleSubmit}>
-          <FormControl id="item" mb={4}>
-              <FormLabel>Item</FormLabel>
-              <Input
-                type="text"
-                value={item}
-                onChange={(e) => setItem(e.target.value)}
-                placeholder="Enter Item"
-                required
-              />
-            </FormControl>
-          <FormControl id="amount" mb={4}>
+          <FormControl id="item" mb={4} isRequired>
+            <FormLabel>Item</FormLabel>
+            <Input
+              type="text"
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
+              placeholder="Enter item name"
+              isDisabled={isSubmitting}
+            />
+          </FormControl>
+          <FormControl id="amount" mb={4} isRequired>
             <FormLabel>Amount</FormLabel>
             <Input
               type="number"
+              step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount"
-              required
+              isDisabled={isSubmitting}
             />
           </FormControl>
-          <FormControl id="category" mb={4}>
+          <FormControl id="category" mb={4} isRequired>
             <FormLabel>Category</FormLabel>
             <Input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Enter description"
-              required
+              placeholder="Enter category"
+              isDisabled={isSubmitting}
             />
           </FormControl>
-          <Button colorScheme="blue" onClick={() => handleTransaction(item, amount, category)} type="submit">
-            Submit
+          <Button
+            colorScheme="blue"
+            type="submit"
+            width="full"
+            isLoading={isSubmitting}
+          >
+            Add Transaction
           </Button>
         </form>
       </Box>
@@ -117,7 +147,7 @@ const TransactionForm = () => {
   );
 };
 
-const TransactionModal = ({isOpen, onClose}) => {
+const TransactionModal = ({ isOpen, onClose, onSuccess }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
@@ -125,7 +155,7 @@ const TransactionModal = ({isOpen, onClose}) => {
             <ModalHeader>New Transaction</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-            <TransactionForm />
+              <TransactionForm onClose={onClose} onSuccess={onSuccess} />
             </ModalBody>
             <ModalFooter>
             </ModalFooter>
